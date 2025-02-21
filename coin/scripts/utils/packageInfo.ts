@@ -1,0 +1,4 @@
+export const packageId = '0xaa80059e55888ff90ca9fd262aae570c279d17b459003f2b7834d6b9029f23f4';
+export const CoinMetadata= '0x99671616704a62899e032dc59e1430a63bc78a580e9637f623d21a418f3f2300';
+export const UpgrdeCap = '0xae697212aa0b29bf1cc409fe692d0ae3fc2f9f51bd045173d774a499c0c395e9';
+export const typename = '0xaa80059e55888ff90ca9fd262aae570c279d17b459003f2b7834d6b9029f23f4::mbtc::MBTC';
