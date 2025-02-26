@@ -37,3 +37,91 @@ This system consists of two primary smart contracts:
 
 - Admin can set staking limits, pause vaults, and modify withdrawal times.
 - New vaults can be created as needed.
+
+## Installation and Deployment Guide
+
+### Install SUI  
+Follow the official SUI installation guide:  
+[Getting Started with SUI](https://docs.sui.io/guides/developer/getting-started/sui-install)  
+
+### Build the Contract  
+Navigate to the `core` directory and build the contract using:  
+```sh
+sui move build
+```
+
+### Test the Contract  
+Run the following command to test the contract:  
+```sh
+sui move test
+```
+
+### Deploy the Contract  
+
+1. Navigate to the `core` directory and install dependencies:  
+   ```sh
+   npm install
+   ```
+
+2. Configure the `.env` file with your deployment credentials:  
+   ```ini
+   MNEMONICS=""
+   NETWORK="testnet"  # Change to "mainnet" if deploying on mainnet
+   ```
+
+3. Deploy the Vault contract and an input token contract (e.g., LBTC) by running:  
+   ```sh
+   ts-node core/scripts/utils/setup.ts
+   ```
+   Necessary parameters will be updated in `core/scripts/utils/packageInfo.ts`.
+
+4. Deploy the Receipt Token contract using the same process:  
+   ```sh
+   ts-node coin/scripts/utils/setup.ts
+   ```
+
+After deployment of receipt token, you will see the following output in the console:  
+```json
+{
+  packageId: '0x90e1cb85b60c87f629eb3c1dbcea1ddfd0ab2c1093b10c15a1697146730f8b60',
+  TreasuryCap: '0xf29dc8cb304a406ed528faee4b3e956d74f307975fee3ef9a219e1b162b816fd'
+}
+```
+The `packageId` is the contract package ID, and the `TreasuryCap` is the treasury cap for the receipt token contract, which is used to mint receipt tokens.
+
+5. Update `core/scripts/utils/packageInfo.ts` with the TreasuryCap value:  
+   ```ts
+   export const ReceiptTokenTreasuryCap = '0xf29dc8cb304a406ed528faee4b3e956d74f307975fee3ef9a219e1b162b816fd';
+   ```
+
+6. Add `COIN_B_TYPE` in `core/scripts/utils/packageInfo.ts`:  
+   ```ts
+   export const COIN_B_TYPE = '0x90e1cb85b60c87f629eb3c1dbcea1ddfd0ab2c1093b10c15a1697146730f8b60::template::TEMPLATE';
+   ```
+   This represents the coin type of the receipt token, using the `packageId` from the deployed coin contract.
+
+### Finalizing Setup  
+
+1. Create a Vault by running the script:  
+   ```sh
+   ts-node core/scripts/src/admin/initializeVault.ts
+   ```
+
+2. The Vault is initially paused. Start it by running:  
+   ```sh
+   ts-node core/scripts/src/admin/toggleVaultPause.ts
+   ```
+
+3. Deposit LBTC and receive receipt tokens by calling:  
+   ```sh
+   ts-node core/scripts/src/depositFor.ts
+   ```
+   The script requires the following arguments:  
+   ```ts
+   arguments: [
+       tx.object(Vault),
+       tx.object('0xc12d8c856ed73d9974084024c7bc19d34c6ea36e70caa1ab65e3a4f00aaf7d8b'),
+       tx.object(Version)
+   ];
+   ```
+   - The second argument is a coin object representing the input token (LBTC in this case).
