@@ -1,7 +1,7 @@
 import { Transaction } from '@mysten/sui/transactions';
 import * as dotenv from 'dotenv';
 import getExecStuff from '../../utils/execStuff';
-import { packageId, CoinLBTCTreasuryCap, AdminCap, COIN_A_TYPE, COIN_B_TYPE, Version } from '../../utils/packageInfo';
+import { packageId, ReceiptTokenTreasuryCap, AdminCap, COIN_A_TYPE, COIN_B_TYPE, Version } from '../../utils/packageInfo';
 import writeIntoPackageInfo from '../../utils/writeIntoPackageInfo';
 dotenv.config();
 
@@ -15,7 +15,7 @@ async function intializeVault() {
         target: `${packageId}::satlayer_pool::initialize_vault`,
         arguments: [
             tx.object(AdminCap),
-            tx.object(CoinLBTCTreasuryCap), 
+            tx.object(ReceiptTokenTreasuryCap), 
             tx.pure.u64(10_000_000_000),
             tx.pure.u64(withdrawaltimestamp),
             tx.object(Version),
