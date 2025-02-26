@@ -243,7 +243,7 @@ public fun get_withdrawal_time<T, K>(
     vault.withdrawal_time
 }
 
-public fun get_total_lbtc_balance<T, K>(
+public fun get_total_vault_balance<T, K>(
     vault: &Vault<T, K> 
 ): u64 {
     vault.balance.value()
