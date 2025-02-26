@@ -77,7 +77,7 @@ const getPackageId = async () => {
         }
         const content = `export const packageId = '${packageId}';
 export const TreasuryCap = '${TreasuryCap}';
-export const TYPENAME = '${packageId}::vlbtc::VLBTC';\n`;
+export const TYPENAME = '${packageId}::template::TEMPLATE';\n`;
 
         await fs.writeFile(`${packagePath}/scripts/utils/packageInfo.ts`, content);
 

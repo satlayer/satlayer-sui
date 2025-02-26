@@ -94,7 +94,8 @@ export const Version = '${Version}';
 export const UpgradeCap = '${UpgradeCap}';
 export const CoinLBTCTreasuryCap = '${CoinLBTCTreasuryCap}';
 export const COIN_A_TYPE = '${packageId}::lbtc::LBTC';
-export const COIN_B_TYPE = '';\n`;
+export const COIN_B_TYPE = '';
+export const ReceiptTokenTreasuryCap = ''\n`;
 
         await fs.writeFile(`${packagePath}/scripts/utils/packageInfo.ts`, content);
 
