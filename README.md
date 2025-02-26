@@ -89,6 +89,39 @@ After deployment of receipt token, you will see the following output in the cons
 ```
 The `packageId` is the contract package ID, and the `TreasuryCap` is the treasury cap for the receipt token contract, which is used to mint receipt tokens.
 
+NOTE: The `lbtc.move` module is intended solely for testing purposes from the scripts side and will be removed later.
+
+To deploy a new vault, follow this process:
+
+For Coin: MBTC
+1. Deploy MBTC using coin/scripts/utils/newPublishAsset.ts, ensuring the respective CoinMetadata is updated.
+
+2. This process will retrieve the type name and treasury cap of MBTC.
+
+3. Update packageInfo.ts in core/scripts/utils/newPublishAsset with the retrieved values:
+
+```typescript
+export const CoinLBTCTreasuryCap = ''; // Replace with actual treasury cap 
+export const COIN_A_TYPE = ''; // replace with actual mbtc typename
+```
+
+For Coin: sat.mBTC
+1. Deploy sat.mBTC using coin/scripts/utils/newPublishAsset.ts, ensuring the respective CoinMetadata is updated.
+
+2. This process will retrieve the type name and treasury cap of sat.mBTC.
+
+3. Update packageInfo.ts in core/scripts/utils/newPublishAsset with the retrieved values:
+
+```typescript
+export const COIN_B_TYPE = '';  // Replace with actual type name  of sat.Mbtc
+export const ReceiptTokenTreasuryCap = '';  // Replace with actual treasury cap  sat.mbtc
+```
+
+Once the setup is complete, the address holding the AdminCap can perform the initialize vault function call.
+
+
+
+
 5. Update `core/scripts/utils/packageInfo.ts` with the TreasuryCap value in `coin/scripts/utils/packageInfo.ts`:  
    ```ts
    export const ReceiptTokenTreasuryCap = '0xf29dc8cb304a406ed528faee4b3e956d74f307975fee3ef9a219e1b162b816fd';
