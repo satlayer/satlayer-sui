@@ -89,12 +89,12 @@ After deployment of receipt token, you will see the following output in the cons
 ```
 The `packageId` is the contract package ID, and the `TreasuryCap` is the treasury cap for the receipt token contract, which is used to mint receipt tokens.
 
-5. Update `core/scripts/utils/packageInfo.ts` with the TreasuryCap value:  
+5. Update `core/scripts/utils/packageInfo.ts` with the TreasuryCap value in `coin/scripts/utils/packageInfo.ts`:  
    ```ts
    export const ReceiptTokenTreasuryCap = '0xf29dc8cb304a406ed528faee4b3e956d74f307975fee3ef9a219e1b162b816fd';
    ```
 
-6. Add `COIN_B_TYPE` in `core/scripts/utils/packageInfo.ts`:  
+6. Add `COIN_B_TYPE` in `core/scripts/utils/packageInfo.ts` from `coin/scripts/utils/packageInfo.ts` `TYPENAME` :  
    ```ts
    export const COIN_B_TYPE = '0x90e1cb85b60c87f629eb3c1dbcea1ddfd0ab2c1093b10c15a1697146730f8b60::template::TEMPLATE';
    ```
@@ -112,7 +112,13 @@ The `packageId` is the contract package ID, and the `TreasuryCap` is the treasur
    ts-node core/scripts/src/admin/toggleVaultPause.ts
    ```
 
-3. Deposit LBTC and receive receipt tokens by calling:  
+3. Mint Test Lbtc token by running: 
+   ```sh
+   ts-node core/scripts/src/mintLBTC.ts
+   ```
+   change respective recipient and mint_amount. it provides lbtc_coin_object_id which is necessary while depositing in vault.
+
+4. Deposit LBTC and receive receipt tokens by calling:  
    ```sh
    ts-node core/scripts/src/depositFor.ts
    ```
