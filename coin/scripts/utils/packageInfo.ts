@@ -1,3 +1,5 @@
-export const packageId = '0xb8a20e7b825b93640e74adc45ab7e75c043b65e535b563114246665f272ae9d0';
-export const TreasuryCap = '0xcaeb9220e7a7c61dfa52d3b088c039ba92dd5834b13ae44496302d9bdce9b65a';
-export const TYPENAME = '0xb8a20e7b825b93640e74adc45ab7e75c043b65e535b563114246665f272ae9d0::template::TEMPLATE';
+export const packageId = '0xaf4c5f3390570c68af17ad642533db264e0618fbc96376fd04e47ceac044856c';
+export const CoinMetadata= '0x1f4bd33b72fa2b280b13d73f215a20bb017d74598617486784d2990ae9ae6487';
+export const UpgrdeCap = '0x7d8f377bcd116d13a72e86d5a68e281998363f384476fb548197a931f8f9c37c';
+export const TreasuryCap = '0xf786faaee0b21675421b7332ec6eda0fd9f9d0cb62dfcef614144d46e48880ae';
+export const typename = '0xaf4c5f3390570c68af17ad642533db264e0618fbc96376fd04e47ceac044856c::sat_btc::SAT_BTC';

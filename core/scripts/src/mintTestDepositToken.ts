@@ -1,18 +1,18 @@
 import { Transaction } from '@mysten/sui/transactions';
 import * as dotenv from 'dotenv';
 import getExecStuff from '../utils/execStuff';
-import {COIN_A_TYPE, CoinLBTCTreasuryCap, packageId } from '../utils/packageInfo';
+import {COIN_A_TYPE, DepositTokenTreasuryCap, packageId } from '../utils/packageInfo';
 import writeIntoPackageInfo from '../utils/writeIntoPackageInfo';
 dotenv.config();
 
-async function mintLBTC(recipient: string, mint_amount: number,) {
+async function mintTestDepositToken(recipient: string, mint_amount: number,) {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
 
     let coin_lbtc = tx.moveCall({
         target: `0x2::coin::mint`,
         arguments: [
-            tx.object(CoinLBTCTreasuryCap),
+            tx.object(DepositTokenTreasuryCap),
             tx.pure.u64(mint_amount),
         ],
         typeArguments: [
@@ -43,20 +43,19 @@ async function mintLBTC(recipient: string, mint_amount: number,) {
         });
 
         let output: any = txn.objectChanges;
-        let lbtc_coin_object_id: any;
+        let coin_object_id: any;
 
         for (let item of output) {
-            //  NOTE NEED TO FIX With TYPE
-            if (item.type === 'created' && item.objectType === `0x2::coin::Coin<${packageId}::lbtc::LBTC>`) {
-                lbtc_coin_object_id = String(item.objectId);
+            if (item.type === 'created' && item.objectType === `0x2::coin::Coin<${COIN_A_TYPE}>`) {
+                coin_object_id = String(item.objectId);
             }
         }
 
-        console.log(`Lbtc_coin_object_id: ${lbtc_coin_object_id}`);
+        console.log(`deposit_coin_object_id: ${coin_object_id}`);
 
     
 }
-mintLBTC(
-    '0x28e2822f5d5ae714299e664ab1739667f65240263c70f26afce3cf086c67c7ec', 
+mintTestDepositToken(
+    '0x821febff0631744c231a0f696f62b72576f2634b2ade78c74ff20f1df97fc9bf', 
     5_000_000_000
 );

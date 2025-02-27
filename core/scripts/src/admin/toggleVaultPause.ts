@@ -4,7 +4,7 @@ import getExecStuff from '../../utils/execStuff';
 import { AdminCap, COIN_A_TYPE, COIN_B_TYPE, packageId, Vault, Version,  } from '../../utils/packageInfo';
 dotenv.config();
 
-async function toggleVaultPause() {
+async function toggleVaultPause(pause: boolean) {
 
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
@@ -14,7 +14,7 @@ async function toggleVaultPause() {
         arguments: [
           tx.object(AdminCap), 
           tx.object(Vault),  
-          tx.pure.bool(false), // limit 
+          tx.pure.bool(pause),
           tx.object(Version),
         ],
         typeArguments: [COIN_A_TYPE, COIN_B_TYPE ],
@@ -25,4 +25,4 @@ async function toggleVaultPause() {
     });
     console.log(result); 
 }
-toggleVaultPause();
+toggleVaultPause(false);

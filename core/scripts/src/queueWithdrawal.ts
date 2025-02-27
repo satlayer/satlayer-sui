@@ -1,4 +1,4 @@
-import { Transaction } from '@mysten/sui/transactions';
+import { coinWithBalance, Transaction } from '@mysten/sui/transactions';
 import * as dotenv from 'dotenv';
 import { SUI_CLOCK_OBJECT_ID } from "@mysten/sui/utils";
 import getExecStuff from '../utils/execStuff';
@@ -8,12 +8,18 @@ dotenv.config();
 async function queueWithdrawal() {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
+
+    const receiptCoin = coinWithBalance({
+      type: COIN_B_TYPE, // Receipt token Type
+      balance: 5_000_000_000, // you can put amount to deposit
+    });
+
     
     tx.moveCall({
         target: `${packageId}::satlayer_pool::queue_withdrawal`,
         arguments: [
             tx.object(Vault), // Vault
-            tx.object('0x9e4ca52646cbcc5c704b07c835a3bcf0047a2afdabb0c8dfe9347b145eee0d72'), // Receipt Token 
+            receiptCoin, // Receipt Coin
             tx.object(SUI_CLOCK_OBJECT_ID),  // clock id 
             tx.object(Version),
         ],

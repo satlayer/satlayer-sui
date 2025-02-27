@@ -5,18 +5,17 @@ import { packageId, ReceiptTokenTreasuryCap, AdminCap, COIN_A_TYPE, COIN_B_TYPE,
 import writeIntoPackageInfo from '../../utils/writeIntoPackageInfo';
 dotenv.config();
 
-async function intializeVault() {
+async function intializeVault(staking_cap: number, withdrawaltimestamp: number,) {
     try {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
-    let withdrawaltimestamp = 15 * 60 * 1000;
     
     tx.moveCall({
         target: `${packageId}::satlayer_pool::initialize_vault`,
         arguments: [
             tx.object(AdminCap),
             tx.object(ReceiptTokenTreasuryCap), 
-            tx.pure.u64(10_000_000_000),
+            tx.pure.u64(staking_cap),
             tx.pure.u64(withdrawaltimestamp),
             tx.object(Version),
         ],
@@ -51,8 +50,7 @@ async function intializeVault() {
         let Vault;
 
         for (let item of output) {
-            //  NOTE NEED TO FIX With TYPE
-            if (item.type === 'created' && item.objectType === `${packageId}::satlayer_pool::Vault<${COIN_A_TYPE}, ${COIN_B_TYPE}>`) {
+            if (item.type === 'created' && await item.objectType === `${packageId}::satlayer_pool::Vault<${COIN_A_TYPE}, ${COIN_B_TYPE}>`) {
                 Vault = String(item.objectId);
             }
         }
@@ -66,4 +64,4 @@ async function intializeVault() {
     }
     
 }
-intializeVault();
+intializeVault(10_000_000_000, 7*24*60*60*1000);
