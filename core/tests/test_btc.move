@@ -1,17 +1,17 @@
 
 #[test_only]
-module satlayer_core::test_lbtc;
+module satlayer_core::test_btc;
 
 use sui::coin;
 
-public struct TEST_LBTC has drop {}
+public struct TEST_BTC has drop {}
 
 #[lint_allow(share_owned)]
-fun init(witness: TEST_LBTC, ctx: &mut TxContext) {
+fun init(witness: TEST_BTC, ctx: &mut TxContext) {
     let (treasury, meta) = coin::create_currency(
         witness,
         9,
-        b"test_lbtc",
+        b"test_btc",
         b"",
         b"",
         option::none(),

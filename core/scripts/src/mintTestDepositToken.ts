@@ -9,7 +9,7 @@ async function mintTestDepositToken(recipient: string, mint_amount: number,) {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
 
-    let coin_lbtc = tx.moveCall({
+    let deposit_coin = tx.moveCall({
         target: `0x2::coin::mint`,
         arguments: [
             tx.object(DepositTokenTreasuryCap),
@@ -19,7 +19,7 @@ async function mintTestDepositToken(recipient: string, mint_amount: number,) {
             COIN_A_TYPE
         ]
     });
-    tx.transferObjects([coin_lbtc], tx.pure.address(recipient));
+    tx.transferObjects([deposit_coin], tx.pure.address(recipient));
     const result = await client.signAndExecuteTransaction({
         signer: keypair,
         transaction: tx,
