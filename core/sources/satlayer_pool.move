@@ -177,7 +177,7 @@ public fun withdraw<T, K>(vault: &mut Vault<T,K>, clock: &Clock, version: &Versi
 
     assert!(!vault.is_paused, EVaultIsPaused);
     assert!(vault.withdrawal_requests.contains(ctx.sender()), EUserNotExistsForWithdrawal);
-    assert!(clock.timestamp_ms() > *vault.withdrawal_requests.borrow(ctx.sender()), EWithdrawAttemptedTooEarly);
+    assert!(clock.timestamp_ms() >= *vault.withdrawal_requests.borrow(ctx.sender()), EWithdrawAttemptedTooEarly);
 
     // splitting balance to provide the recipient
     let withdraw_amount = vault.withdraw_amount.remove(ctx.sender());
