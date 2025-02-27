@@ -73,7 +73,28 @@ public fun test_initialize_vault() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
+        &world.version,
+        ctx(&mut world.scenario),
+    );
+
+    next_tx(&mut world.scenario, OWNER);
+    end_world(world);
+}
+
+#[test, expected_failure(abort_code=satlayer_core::satlayer_pool::EInvalidCoolDownTime)] 
+public fun test_revert_initialize_vault() {
+    let mut world = start_world(); 
+
+    next_tx(&mut world.scenario, OWNER); 
+
+    let treasury_cap = coin::create_treasury_cap_for_testing<TEST_VLBTC>(ctx(&mut world.scenario));
+
+    satlayer_pool::initialize_vault<TEST_LBTC, TEST_VLBTC>(
+        &world.admin_cap, 
+        treasury_cap, 
+        10_000_000_000, 
+        15*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -94,7 +115,7 @@ public fun test_check_vault_is_paused() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -120,7 +141,7 @@ public fun test_set_staking_cap() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -158,7 +179,7 @@ public fun test_update_withdrawal_time() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -169,13 +190,51 @@ public fun test_update_withdrawal_time() {
     satlayer_pool::update_withdrawal_time<TEST_LBTC, TEST_VLBTC>(
         & world.admin_cap, 
         &mut vault,
-        10*60*1000,
+        10*24*60*60*1000,
         &world.version,
     ); 
 
     assert_eq(
-        satlayer_pool::get_withdrawal_time<TEST_LBTC, TEST_VLBTC>(&vault),
-        10*60*1000
+        satlayer_pool::get_withdrawal_cooldown_time<TEST_LBTC, TEST_VLBTC>(&vault),
+        10*24*60*60*1000
+    );
+
+    ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault); 
+
+    next_tx(&mut world.scenario, OWNER);
+    end_world(world);
+}
+
+#[test, expected_failure(abort_code=satlayer_core::satlayer_pool::EInvalidCoolDownTime)]
+public fun test_revert_update_withdrawal_time() {
+    let mut world = start_world(); 
+
+    next_tx(&mut world.scenario, OWNER); 
+
+     let treasury_cap = coin::create_treasury_cap_for_testing<TEST_VLBTC>(ctx(&mut world.scenario));
+
+    satlayer_pool::initialize_vault<TEST_LBTC, TEST_VLBTC>(
+        &world.admin_cap, 
+        treasury_cap, 
+        10_000_000_000, 
+        15*24*60*60*1000, 
+        &world.version,
+        ctx(&mut world.scenario),
+    );
+
+    next_tx(&mut world.scenario, USER_ONE); 
+    let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario);
+
+    satlayer_pool::update_withdrawal_time<TEST_LBTC, TEST_VLBTC>(
+        & world.admin_cap, 
+        &mut vault,
+        10*24*60*60*1000,
+        &world.version,
+    ); 
+
+    assert_eq(
+        satlayer_pool::get_withdrawal_cooldown_time<TEST_LBTC, TEST_VLBTC>(&vault),
+        10*24*60*60*1000
     );
 
     ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault); 
@@ -198,7 +257,7 @@ public fun test_revert_deposit_for_when_paused() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -238,7 +297,7 @@ public fun test_revert_deposit_for_when_cap_is_reached() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -308,7 +367,7 @@ public fun test_deposit_for() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -361,7 +420,7 @@ public fun test_revert_deposit_for_with_coin_zero() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -413,7 +472,7 @@ public fun test_revert_queue_withdrawal_when_paused() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -465,7 +524,7 @@ public fun test_revert_queue_withdrawal_when_paused() {
     next_tx(&mut world.scenario, USER_ONE); 
     let mut clock = clock::create_for_testing(ctx(&mut world.scenario)); 
 
-    clock.set_for_testing(3 * 60 * 1000);
+    clock.set_for_testing(8*24*60*60*1000);
 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
     let coin_vlbtc = ts::take_from_sender<Coin<TEST_VLBTC>>(&world.scenario);
@@ -498,7 +557,7 @@ public fun test_queue_withdrawal() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -537,7 +596,7 @@ public fun test_queue_withdrawal() {
     next_tx(&mut world.scenario, USER_ONE); 
     let mut clock = clock::create_for_testing(ctx(&mut world.scenario)); 
 
-    clock.set_for_testing(3 * 60 * 1000);
+    clock.set_for_testing(8 * 24* 60 * 60 * 1000);
 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
     let coin_vlbtc = ts::take_from_sender<Coin<TEST_VLBTC>>(&world.scenario);
@@ -553,7 +612,7 @@ public fun test_queue_withdrawal() {
     // assertion check of user's withdrawal timestamp.
     assert_eq(
         satlayer_pool::get_withdrawal_timestamp<TEST_LBTC, TEST_VLBTC>(&vault, ctx(&mut world.scenario)), 
-        3*60*1000 + 5*60*1000
+        8*24*60*60*1000 + 7*24*60*60*1000
     );
 
     assert_eq(
@@ -581,7 +640,7 @@ public fun test_queue_withdrawal_multiple_times() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -620,7 +679,7 @@ public fun test_queue_withdrawal_multiple_times() {
     next_tx(&mut world.scenario, USER_ONE); 
     let mut clock = clock::create_for_testing(ctx(&mut world.scenario)); 
 
-    clock.set_for_testing(3 * 60 * 1000);
+    clock.set_for_testing(8 * 24 * 60 * 60 * 1000);
 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
     let mut coin_vlbtc = ts::take_from_sender<Coin<TEST_VLBTC>>(&world.scenario);
@@ -636,7 +695,7 @@ public fun test_queue_withdrawal_multiple_times() {
     // assertion check of user's withdrawal timestamp.
     assert_eq(
         satlayer_pool::get_withdrawal_timestamp<TEST_LBTC, TEST_VLBTC>(&vault, ctx(&mut world.scenario)), 
-        3*60*1000 + 5*60*1000
+        8*24*60*60*1000 + 7*24*60*60*1000
     );
 
     assert_eq(
@@ -647,7 +706,7 @@ public fun test_queue_withdrawal_multiple_times() {
     // Testing again adding lbtc to withdraw the coins
     next_tx(&mut world.scenario, USER_ONE);
 
-    clock.set_for_testing(8*60*1000); 
+    clock.set_for_testing(9*24*60*60*1000); 
     // let coin_vlbtc = coin::mint_for_testing<TEST_VLBTC>(1_000_000_000, ctx(&mut world.scenario));
 
      satlayer_pool::queue_withdrawal<TEST_LBTC, TEST_VLBTC>(
@@ -661,7 +720,7 @@ public fun test_queue_withdrawal_multiple_times() {
     // assertion check of user's withdrawal timestamp.
     assert_eq(
         satlayer_pool::get_withdrawal_timestamp<TEST_LBTC, TEST_VLBTC>(&vault, ctx(&mut world.scenario)), 
-        8*60*1000 + 5*60*1000
+        9*24*60*60*1000 + 7*24*60*60*1000
     );
 
     assert_eq(
@@ -689,7 +748,7 @@ public fun test_revert_withdraw_when_paused() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -728,7 +787,7 @@ public fun test_revert_withdraw_when_paused() {
     next_tx(&mut world.scenario, USER_ONE); 
     let mut clock = clock::create_for_testing(ctx(&mut world.scenario)); 
 
-    clock.set_for_testing(3 * 60 * 1000);
+    clock.set_for_testing(8*24*60*60*1000);
 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
     let coin_vlbtc = ts::take_from_sender<Coin<TEST_VLBTC>>(&world.scenario);
@@ -757,7 +816,7 @@ public fun test_revert_withdraw_when_paused() {
     ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault); 
 
     // step 5: USER ONE withdrawing after execeeding Withdrawal 
-    clock.set_for_testing(8*60*1000 + 1); 
+    clock.set_for_testing(8*24*60*60*1000 + 1); 
 
     next_tx(&mut world.scenario, USER_ONE); 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
@@ -789,7 +848,7 @@ public fun test_revert_withdraw_with_unauthorized_user() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -877,7 +936,7 @@ public fun test_revert_withdraw_before_withdrawal_timestamp() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -916,7 +975,7 @@ public fun test_revert_withdraw_before_withdrawal_timestamp() {
     next_tx(&mut world.scenario, USER_ONE); 
     let mut clock = clock::create_for_testing(ctx(&mut world.scenario)); 
 
-    clock.set_for_testing(3 * 60 * 1000);
+    clock.set_for_testing(8*24*60*60*1000);
 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
     let coin_vlbtc = ts::take_from_sender<Coin<TEST_VLBTC>>(&world.scenario);
@@ -932,7 +991,7 @@ public fun test_revert_withdraw_before_withdrawal_timestamp() {
     ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault);
 
     // step 5: USER ONE withdrawing after execeeding Withdrawal 
-    clock.set_for_testing(4*60*1000); 
+    clock.set_for_testing(11*24*60*60*1000); 
 
     next_tx(&mut world.scenario, USER_ONE); 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
@@ -964,7 +1023,7 @@ public fun test_revert_withdrawal_with_amount_zero(){
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -1019,7 +1078,7 @@ public fun test_revert_withdrawal_with_amount_zero(){
     ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault);
 
     // step 5: USER ONE withdrawing after execeeding Withdrawal 
-    clock.set_for_testing(8*60*1000 + 1); 
+    clock.set_for_testing(3*60*1000 + 7*24*60*60*1000); 
 
     next_tx(&mut world.scenario, USER_ONE); 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
@@ -1053,7 +1112,7 @@ public fun test_withdraw() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        5*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -1108,7 +1167,7 @@ public fun test_withdraw() {
     ts::return_shared<Vault<TEST_LBTC, TEST_VLBTC>>(vault);
 
     // step 5: USER ONE withdrawing after execeeding Withdrawal 
-    clock.set_for_testing(8*60*1000 + 1); 
+    clock.set_for_testing(8*60*1000 + 7*24*60*60*1000); 
 
     next_tx(&mut world.scenario, USER_ONE); 
     let mut vault = ts::take_shared<Vault<TEST_LBTC, TEST_VLBTC>>(&world.scenario); 
