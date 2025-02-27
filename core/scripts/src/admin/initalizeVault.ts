@@ -9,7 +9,7 @@ async function intializeVault() {
     try {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
-    let withdrawaltimestamp = 5 * 60 * 1000;
+    let withdrawaltimestamp = 15 * 60 * 1000;
     
     tx.moveCall({
         target: `${packageId}::satlayer_pool::initialize_vault`,

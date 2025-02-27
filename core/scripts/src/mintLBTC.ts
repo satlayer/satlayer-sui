@@ -57,6 +57,6 @@ async function mintLBTC(recipient: string, mint_amount: number,) {
     
 }
 mintLBTC(
-    '0x821febff0631744c231a0f696f62b72576f2634b2ade78c74ff20f1df97fc9bf', 
+    '0x28e2822f5d5ae714299e664ab1739667f65240263c70f26afce3cf086c67c7ec', 
     5_000_000_000
 );

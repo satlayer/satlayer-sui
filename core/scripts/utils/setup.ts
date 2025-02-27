@@ -10,7 +10,6 @@ const getPackageId = async () => {
     let VAdminCap = "";
     let Version = "";
     let UpgradeCap = "";
-    let CoinLBTCTreasuryCap = "";
 
     try {
         const { keypair, client } = getExecStuff();
@@ -82,8 +81,6 @@ const getPackageId = async () => {
                     Version = String(item.objectId);
                 if (item.objectType === `0x2::package::UpgradeCap`)
                     UpgradeCap = String(item.objectId);
-                if (item.objectType === `0x2::coin::TreasuryCap<${packageId}::lbtc::LBTC>`)
-                    CoinLBTCTreasuryCap = String(item.objectId);
                 
             }
         }
@@ -92,8 +89,8 @@ export const AdminCap = '${AdminCap}';
 export const VAdminCap = '${VAdminCap}'; 
 export const Version = '${Version}';
 export const UpgradeCap = '${UpgradeCap}';
-export const CoinLBTCTreasuryCap = '${CoinLBTCTreasuryCap}';
-export const COIN_A_TYPE = '${packageId}::lbtc::LBTC';
+export const DepositTokenTreasuryCap = '';
+export const COIN_A_TYPE = '';
 export const COIN_B_TYPE = '';
 export const ReceiptTokenTreasuryCap = '';\n`;
 
@@ -105,7 +102,6 @@ export const ReceiptTokenTreasuryCap = '';\n`;
             VAdminCap,
             Version,
             UpgradeCap,
-            CoinLBTCTreasuryCap,
         };
 } 
     catch (error) {

@@ -1,4 +1,3 @@
-export const packageId = '0xaa80059e55888ff90ca9fd262aae570c279d17b459003f2b7834d6b9029f23f4';
-export const CoinMetadata= '0x99671616704a62899e032dc59e1430a63bc78a580e9637f623d21a418f3f2300';
-export const UpgrdeCap = '0xae697212aa0b29bf1cc409fe692d0ae3fc2f9f51bd045173d774a499c0c395e9';
-export const typename = '0xaa80059e55888ff90ca9fd262aae570c279d17b459003f2b7834d6b9029f23f4::mbtc::MBTC';
+export const packageId = '0xb8a20e7b825b93640e74adc45ab7e75c043b65e535b563114246665f272ae9d0';
+export const TreasuryCap = '0xcaeb9220e7a7c61dfa52d3b088c039ba92dd5834b13ae44496302d9bdce9b65a';
+export const TYPENAME = '0xb8a20e7b825b93640e74adc45ab7e75c043b65e535b563114246665f272ae9d0::template::TEMPLATE';
