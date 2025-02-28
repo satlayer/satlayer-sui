@@ -12,8 +12,12 @@ use satlayer_core::version::{Version};
 
 const VERSION: u64 = 1;
 
+// The Minimum Withdrawal Cooldown for Queue Withdrawal
 const MIN_WITHDRAWAL_COOLDOWN: u64 = 7 * 24 * 60 * 60 * 1000; 
+// The Maximum Withdrawal Cooldown for Queue Withdrawal
 const MAX_WITHDRAWAL_COOLDOWN: u64 = 14 * 24 * 60 *60 * 1000;
+/// The Minimum Deposit amount denominated in Mist (1 * 10^9)
+const MIN_DEPOSIT_AMOUNT: u64 = 1_000_000_000;
 
 /* ================= errors ================= */
 
@@ -35,6 +39,10 @@ const EWithdrawalAmountCannotBeZero: u64 = 6;
 const EInitialTotalSupplyMustbeZero: u64 = 7;
 // Withdraw Cooldown should be lies on min_withdrawal_cooldown and max_withdrawal_cooldown
 const EInvalidCoolDownTime: u64 = 8;
+// When Staking Caps is enabled Deposit amount must be greater or equal to minimumm deposit amount;
+const EDepositAmountLessThanMinDepositAmount: u64 = 9;
+// New Update Cooldown Must be Greater than Previous cooldown
+const ENewCooldownMustGreaterThanPrevious: u64 = 10;
 
 /* ================= AdminCap ================= */
 
@@ -122,6 +130,10 @@ public fun deposit_for<T, K>(vault: &mut Vault<T,K>, deposit_amount: Coin<T>, ve
 
     assert!(!vault.is_paused, EVaultIsPaused);
     assert!(deposit_amount.value() > 0, EDepositAmountCannotBeZero);
+
+    if(vault.caps_enabled) {
+        assert!(deposit_amount.value() >= MIN_DEPOSIT_AMOUNT, EDepositAmountLessThanMinDepositAmount);
+    };
     if(vault.caps_enabled && vault.balance.value() + deposit_amount.value() > vault.staking_cap) abort ECapReached;
 
     let deposit_value = deposit_amount.value(); 
@@ -213,7 +225,8 @@ public fun update_withdrawal_time<T, K>(
     version: &Version,
 ) {
     version.validate_version(VERSION);
-    assert!(new_cooldown_time >= MIN_WITHDRAWAL_COOLDOWN && new_cooldown_time <= MAX_WITHDRAWAL_COOLDOWN, EInvalidCoolDownTime);
+    assert!(new_cooldown_time > MIN_WITHDRAWAL_COOLDOWN && new_cooldown_time <= MAX_WITHDRAWAL_COOLDOWN, EInvalidCoolDownTime);
+    assert!(new_cooldown_time > vault.withdrawal_cooldown, ENewCooldownMustGreaterThanPrevious);
     vault.withdrawal_cooldown= new_cooldown_time;
 }
 

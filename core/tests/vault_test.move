@@ -216,7 +216,7 @@ public fun test_revert_update_withdrawal_time() {
         &world.admin_cap, 
         treasury_cap, 
         10_000_000_000, 
-        15*24*60*60*1000, 
+        7*24*60*60*1000, 
         &world.version,
         ctx(&mut world.scenario),
     );
@@ -227,13 +227,52 @@ public fun test_revert_update_withdrawal_time() {
     satlayer_pool::update_withdrawal_time<TEST_BTC, SAT_BTC>(
         & world.admin_cap, 
         &mut vault,
-        10*24*60*60*1000,
+        15*24*60*60*1000,
         &world.version,
     ); 
 
     assert_eq(
         satlayer_pool::get_withdrawal_cooldown_time<TEST_BTC, SAT_BTC>(&vault),
         10*24*60*60*1000
+    );
+
+    ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
+
+    next_tx(&mut world.scenario, OWNER);
+    end_world(world);
+}
+
+
+#[test, expected_failure(abort_code=satlayer_core::satlayer_pool::ENewCooldownMustGreaterThanPrevious)]
+public fun test_revert_update_withdrawal_time_must_be_greater_than_previous_cooldown() {
+    let mut world = start_world(); 
+
+    next_tx(&mut world.scenario, OWNER); 
+
+     let treasury_cap = coin::create_treasury_cap_for_testing<SAT_BTC>(ctx(&mut world.scenario));
+
+    satlayer_pool::initialize_vault<TEST_BTC, SAT_BTC>(
+        &world.admin_cap, 
+        treasury_cap, 
+        10_000_000_000, 
+        9*24*60*60*1000, 
+        &world.version,
+        ctx(&mut world.scenario),
+    );
+
+    next_tx(&mut world.scenario, USER_ONE); 
+    let mut vault = ts::take_shared<Vault<TEST_BTC, SAT_BTC>>(&world.scenario);
+
+    satlayer_pool::update_withdrawal_time<TEST_BTC, SAT_BTC>(
+        & world.admin_cap, 
+        &mut vault,
+        8*24*60*60*1000,
+        &world.version,
+    ); 
+
+    assert_eq(
+        satlayer_pool::get_withdrawal_cooldown_time<TEST_BTC, SAT_BTC>(&vault),
+        8*24*60*60*1000
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -397,6 +436,59 @@ public fun test_deposit_for() {
     );
 
     assert_eq(return_coin_test_vtest_btc.value(), 1_000_000_000);
+    transfer::public_transfer(return_coin_test_vtest_btc, USER_ONE);
+
+    ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
+
+    next_tx(&mut world.scenario, OWNER);
+    end_world(world);
+}
+
+#[test, expected_failure(abort_code=satlayer_core::satlayer_pool::EDepositAmountLessThanMinDepositAmount)] 
+public fun test_revert_deposit_for_when_caps_is_enabled_and_deposit_amount_is_less_than_cap() { 
+    let mut world = start_world(); 
+
+    next_tx(&mut world.scenario, OWNER); 
+
+    // step_1: create the treasury cap for testing for test vtest_btc
+    let treasury_cap = coin::create_treasury_cap_for_testing<SAT_BTC>(ctx(&mut world.scenario));
+
+    // step 2: initialize the vault of type `Vault<TEST_BTC, SAT_BTC>` 
+    satlayer_pool::initialize_vault<TEST_BTC, SAT_BTC>(
+        &world.admin_cap, 
+        treasury_cap, 
+        10_000_000_000, 
+        7*24*60*60*1000, 
+        &world.version,
+        ctx(&mut world.scenario),
+    );
+
+    next_tx(&mut world.scenario, OWNER); 
+    let mut vault = ts::take_shared<Vault<TEST_BTC, SAT_BTC>>(&world.scenario); 
+    
+    satlayer_pool::toggle_vault_pause<TEST_BTC, SAT_BTC>(
+        & world.admin_cap, 
+        &mut vault, 
+        false, 
+        &world.version,
+    );
+
+    ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
+
+    // step 3: User to deposit the test_btc in the `Vault<TEST_BTC, SAT_BTC>`
+    next_tx(&mut world.scenario, USER_ONE); 
+
+    let mut vault = ts::take_shared<Vault<TEST_BTC, SAT_BTC>>(&world.scenario);
+    let coin_test_btc = coin::mint_for_testing<TEST_BTC>(1_000_000_00, ctx(&mut world.scenario));
+
+    let return_coin_test_vtest_btc = satlayer_pool::deposit_for<TEST_BTC, SAT_BTC>(
+        &mut vault,
+        coin_test_btc, 
+        &world.version,
+        ctx(&mut world.scenario)
+    );
+
+    assert_eq(return_coin_test_vtest_btc.value(), 1_000_000_00);
     transfer::public_transfer(return_coin_test_vtest_btc, USER_ONE);
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
