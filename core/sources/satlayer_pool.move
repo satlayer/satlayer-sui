@@ -16,8 +16,7 @@ const VERSION: u64 = 1;
 const MIN_WITHDRAWAL_COOLDOWN: u64 = 7 * 24 * 60 * 60 * 1000; 
 // The Maximum Withdrawal Cooldown for Queue Withdrawal
 const MAX_WITHDRAWAL_COOLDOWN: u64 = 14 * 24 * 60 *60 * 1000;
-/// The Minimum Deposit amount denominated in Mist (1 * 10^9)
-const MIN_DEPOSIT_AMOUNT: u64 = 1_000_000_000;
+
 
 /* ================= errors ================= */
 
@@ -63,6 +62,8 @@ public struct Vault<phantom T, phantom K> has key, store {
     caps_enabled:  bool, 
     // balance of Input Token 
     balance: Balance<T>, 
+    // minimum deposit token with respect to token decimals of deposit token
+    min_deposit_amount: u64, 
     // withdrawal timestamp 
     withdrawal_cooldown: u64,
     // Maps user address to withdrawal request timestamp 
@@ -103,7 +104,7 @@ fun init(ctx: &mut TxContext) {
 }
 
 // Once the receipt token is deployed, admin calls this function with the treasury cap of the receipt token
-public fun initialize_vault<T, K>(_cap: &AdminCap, receipt_treasury_cap: TreasuryCap<K>, staking_cap: u64, withdrawal_cooldown: u64, version: &Version, ctx: &mut TxContext) {
+public fun initialize_vault<T, K>(_cap: &AdminCap, receipt_treasury_cap: TreasuryCap<K>, staking_cap: u64, min_deposit_amount: u64, withdrawal_cooldown: u64, version: &Version, ctx: &mut TxContext) {
     version.validate_version(VERSION);
 
     assert!(receipt_treasury_cap.total_supply() == 0, EInitialTotalSupplyMustbeZero);
@@ -115,6 +116,7 @@ public fun initialize_vault<T, K>(_cap: &AdminCap, receipt_treasury_cap: Treasur
         is_paused: true, 
         caps_enabled: true,
         balance: balance::zero<T>(), 
+        min_deposit_amount,
         withdrawal_cooldown,
         withdrawal_requests: table::new(ctx),
         withdraw_amount: table::new(ctx),
@@ -132,9 +134,10 @@ public fun deposit_for<T, K>(vault: &mut Vault<T,K>, deposit_amount: Coin<T>, ve
     assert!(deposit_amount.value() > 0, EDepositAmountCannotBeZero);
 
     if(vault.caps_enabled) {
-        assert!(deposit_amount.value() >= MIN_DEPOSIT_AMOUNT, EDepositAmountLessThanMinDepositAmount);
+       assert!(deposit_amount.value() >= vault.min_deposit_amount, EDepositAmountLessThanMinDepositAmount);
+
+       if(vault.balance.value() + deposit_amount.value() > vault.staking_cap) abort ECapReached;
     };
-    if(vault.caps_enabled && vault.balance.value() + deposit_amount.value() > vault.staking_cap) abort ECapReached;
 
     let deposit_value = deposit_amount.value(); 
 
@@ -225,8 +228,7 @@ public fun update_withdrawal_time<T, K>(
     version: &Version,
 ) {
     version.validate_version(VERSION);
-    assert!(new_cooldown_time > MIN_WITHDRAWAL_COOLDOWN && new_cooldown_time <= MAX_WITHDRAWAL_COOLDOWN, EInvalidCoolDownTime);
-    assert!(new_cooldown_time > vault.withdrawal_cooldown, ENewCooldownMustGreaterThanPrevious);
+    assert!(new_cooldown_time > vault.withdrawal_cooldown &&  new_cooldown_time <= MAX_WITHDRAWAL_COOLDOWN, ENewCooldownMustGreaterThanPrevious);
     vault.withdrawal_cooldown= new_cooldown_time;
 }
 

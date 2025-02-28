@@ -5,7 +5,7 @@ import { packageId, ReceiptTokenTreasuryCap, AdminCap, COIN_A_TYPE, COIN_B_TYPE,
 import writeIntoPackageInfo from '../../utils/writeIntoPackageInfo';
 dotenv.config();
 
-async function intializeVault(staking_cap: number, withdrawaltimestamp: number,) {
+async function intializeVault(staking_cap: number, min_deposit_amount: number, withdrawaltimestamp: number) {
     try {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
@@ -16,6 +16,7 @@ async function intializeVault(staking_cap: number, withdrawaltimestamp: number,)
             tx.object(AdminCap),
             tx.object(ReceiptTokenTreasuryCap), 
             tx.pure.u64(staking_cap),
+            tx.pure.u64(min_deposit_amount), // it will be according to deposit token decimal amount.
             tx.pure.u64(withdrawaltimestamp),
             tx.object(Version),
         ],
@@ -64,4 +65,4 @@ async function intializeVault(staking_cap: number, withdrawaltimestamp: number,)
     }
     
 }
-intializeVault(10_000_000_000, 7*24*60*60*1000);
+intializeVault(10_000_000_000, 1_000_000_000, 7*24*60*60*1000);
