@@ -95,6 +95,39 @@ public struct WithdrawalRequest<phantom K> has copy, drop {
     withdrawal_timestamp: u64,
 }
 
+public struct SetStakingCapEvent<phantom K> has copy, drop {
+    admin: address,
+    vault: ID,
+    new_cap: u64
+}
+
+public struct CapsEnabledEvent<phantom K> has copy, drop {
+    admin: address,
+    vault: ID,
+    enabled: bool
+}
+
+public struct ToggleVaultEvent<phantom K> has copy, drop {
+    admin: address,
+    vault: ID,
+    status: bool 
+}
+
+public struct UpdateWithdrawalTimeEvent<phantom K> has copy, drop {
+    admin: address,
+    vault: ID,
+    new_cooldown_time: u64 
+}
+
+public struct InitializeVaultEvent<phantom T, phantom K> has copy, drop {
+    admin: address,
+    vault: ID,
+    input_coin_type: TypeName,
+    receipt_coin_type: TypeName,
+    staking_cap: u64 ,
+    min_deposit_amount: u64,
+    withdrawal_cooldown: u64
+}
 
 /* ================= Init ================= */
 
@@ -125,7 +158,19 @@ public fun initialize_vault<T, K>(_cap: &AdminCap, receipt_treasury_cap: Treasur
         withdraw_amount: table::new(ctx),
         treasury_cap: receipt_treasury_cap, 
     };
+
+    event::emit(InitializeVaultEvent<T, K>{
+        admin: ctx.sender(),
+        vault: object::id(&vault),
+        input_coin_type:  type_name::get<T>(),
+        receipt_coin_type:  type_name::get<K>(),
+        staking_cap ,
+        min_deposit_amount,
+        withdrawal_cooldown
+    });
+
     transfer::public_share_object(vault);
+
 }
 
 /* ================= Deposit ================= */
@@ -222,9 +267,16 @@ public fun set_staking_cap<T, K>(
     vault: &mut Vault<T, K>, 
     new_cap: u64,
     version: &Version,
+    ctx: &mut TxContext
 ) {
     version.validate_version(VERSION);
     vault.staking_cap = new_cap;
+
+    event::emit(SetStakingCapEvent<K>{
+        admin: ctx.sender(),
+        vault: object::id(vault),
+        new_cap: new_cap
+    });
 }
 
 public fun update_withdrawal_time<T, K>(
@@ -232,10 +284,17 @@ public fun update_withdrawal_time<T, K>(
     vault: &mut Vault<T, K>, 
     new_cooldown_time: u64,
     version: &Version,
+    ctx: &mut TxContext
 ) {
     version.validate_version(VERSION);
     assert!(new_cooldown_time > vault.withdrawal_cooldown &&  new_cooldown_time <= MAX_WITHDRAWAL_COOLDOWN, ENewCooldownMustGreaterThanPrevious);
     vault.withdrawal_cooldown= new_cooldown_time;
+
+    event::emit(UpdateWithdrawalTimeEvent<K>{
+        admin: ctx.sender(),
+        vault: object::id(vault),
+        new_cooldown_time
+    });
 }
 
 public fun toggle_vault_pause<T, K>(
@@ -243,10 +302,17 @@ public fun toggle_vault_pause<T, K>(
     vault: &mut Vault<T, K>,
     pause: bool,
     version: &Version,
+    ctx: &mut TxContext,
 ) {
     version.validate_version(VERSION);
     assert!(vault.is_paused != pause, EParamsUnchanged);
-    vault.is_paused = pause
+    vault.is_paused = pause;
+
+    event::emit(ToggleVaultEvent<K>{
+        admin: ctx.sender(),
+        vault: object::id(vault),
+        status: pause
+    });
 }
 
 
@@ -255,10 +321,17 @@ public fun set_caps_enabled<T, K>(
     vault: &mut Vault<T, K>,
     enabled: bool,
     version: &Version,
+    ctx: &mut TxContext
 ) {
     version.validate_version(VERSION);
     assert!(vault.caps_enabled != enabled, EParamsUnchanged);
     vault.caps_enabled = enabled;
+
+    event::emit(CapsEnabledEvent<K>{
+        admin: ctx.sender(),
+        vault: object::id(vault),
+        enabled
+    });
 }
 
 
