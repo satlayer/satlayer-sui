@@ -77,16 +77,19 @@ public struct Vault<phantom T, phantom K> has key, store {
 /* ================= events ================= */
 
 public struct DepositEvent<phantom K> has copy, drop {
+    sender: address,
     coin_type: TypeName,
     deposit_amount: u64, 
     receipt_token_minted: u64, 
 }
 
 public struct WithdrawEvent<phantom K> has copy, drop {
+    sender: address,
     amount: u64, 
 }
 
 public struct WithdrawalRequest<phantom K> has copy, drop {
+    sender: address,
     amount: u64, 
     receipt_token_burned: u64,
     withdrawal_timestamp: u64,
@@ -150,6 +153,7 @@ public fun deposit_for<T, K>(vault: &mut Vault<T,K>, deposit_amount: Coin<T>, ve
     let coin_type = type_name::get<K>();
     event::emit(
        DepositEvent<K>{
+        sender: ctx.sender(),
         coin_type, 
         deposit_amount: deposit_value,
         receipt_token_minted: receipt_coin.value(), 
@@ -177,6 +181,7 @@ public fun queue_withdrawal<T, K>(vault: &mut Vault<T,K>, receipt_token: Coin<K>
     };
 
     event::emit(WithdrawalRequest<K>{
+        sender: ctx.sender(),
         amount: receipt_token.value(), 
         receipt_token_burned: receipt_token.value(),
         withdrawal_timestamp: clock.timestamp_ms(),
@@ -203,6 +208,7 @@ public fun withdraw<T, K>(vault: &mut Vault<T,K>, clock: &Clock, version: &Versi
     let _ = vault.withdrawal_requests.remove(ctx.sender());
 
     event::emit(WithdrawEvent<K>{
+        sender: ctx.sender(),
         amount: return_coin.value()
     });
     
