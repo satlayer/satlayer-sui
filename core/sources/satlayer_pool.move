@@ -162,15 +162,14 @@ public fun initialize_vault<T, K>(_cap: &AdminCap, receipt_treasury_cap: Treasur
     event::emit(InitializeVaultEvent<T, K>{
         admin: ctx.sender(),
         vault: object::id(&vault),
-        input_coin_type:  type_name::get<T>(),
-        receipt_coin_type:  type_name::get<K>(),
-        staking_cap ,
+        input_coin_type: type_name::get<T>(),
+        receipt_coin_type: type_name::get<K>(),
+        staking_cap,
         min_deposit_amount,
         withdrawal_cooldown
     });
 
     transfer::public_share_object(vault);
-
 }
 
 /* ================= Deposit ================= */
