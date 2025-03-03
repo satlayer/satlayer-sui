@@ -156,7 +156,8 @@ public fun test_set_staking_cap() {
         &world.admin_cap, 
         &mut vault,
         15_000_000_000,
-        &world.version
+        &world.version,
+        ctx(&mut world.scenario) 
     ); 
 
     assert_eq(
@@ -196,6 +197,7 @@ public fun test_update_withdrawal_time() {
         &mut vault,
         10*24*60*60*1000,
         &world.version,
+        ctx(&mut world.scenario) 
     ); 
 
     assert_eq(
@@ -235,6 +237,7 @@ public fun test_revert_update_withdrawal_time() {
         &mut vault,
         15*24*60*60*1000,
         &world.version,
+        ctx(&mut world.scenario) 
     ); 
 
     assert_eq(
@@ -275,6 +278,7 @@ public fun test_revert_update_withdrawal_time_must_be_greater_than_previous_cool
         &mut vault,
         8*24*60*60*1000,
         &world.version,
+        ctx(&mut world.scenario) 
     ); 
 
     assert_eq(
@@ -356,7 +360,8 @@ public fun test_revert_deposit_for_when_cap_is_reached() {
         & world.admin_cap, 
         &mut vault, 
         false,
-        &world.version, 
+        &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -428,6 +433,7 @@ public fun test_deposit_for() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -482,6 +488,7 @@ public fun test_revert_deposit_for_when_caps_is_enabled_and_deposit_amount_is_le
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -536,6 +543,7 @@ public fun test_revert_deposit_for_with_coin_zero() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -589,6 +597,7 @@ public fun test_revert_queue_withdrawal_when_paused() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -619,6 +628,7 @@ public fun test_revert_queue_withdrawal_when_paused() {
         &mut vault, 
         true, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -675,6 +685,7 @@ public fun test_queue_withdrawal() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -759,6 +770,7 @@ public fun test_queue_withdrawal_multiple_times() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -868,6 +880,7 @@ public fun test_revert_withdraw_when_paused() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -918,6 +931,7 @@ public fun test_revert_withdraw_when_paused() {
         &mut vault, 
         true, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -969,6 +983,7 @@ public fun test_revert_withdraw_with_unauthorized_user() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -1058,6 +1073,7 @@ public fun test_revert_withdraw_before_withdrawal_timestamp() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -1146,6 +1162,7 @@ public fun test_revert_withdrawal_with_amount_zero(){
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
@@ -1236,6 +1253,7 @@ public fun test_withdraw() {
         &mut vault, 
         false, 
         &world.version,
+        ctx(&mut world.scenario) 
     );
 
     ts::return_shared<Vault<TEST_BTC, SAT_BTC>>(vault); 
