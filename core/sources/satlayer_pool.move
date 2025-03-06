@@ -386,7 +386,7 @@ public fun get_vault_is_paused<T, K>(vault: &Vault<T, K>): bool {
     vault.is_paused
 }
 
-public fun get_user_withdraw_info<T, K>(vault: &Vault<T, K>, ctx: &mut TxContext): (u64, u64) {
+public fun get_user_withdraw_info<T, K>(vault: &Vault<T, K>, ctx: &TxContext): (u64, u64) {
     let withdraw_info = vault.withdraw_info.borrow(ctx.sender());
     let withdrawal_requests = withdraw_info.withdrawal_requests;
     let withdraw_amount = withdraw_info.withdraw_amount;
