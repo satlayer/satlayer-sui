@@ -230,7 +230,7 @@ public fun queue_withdrawal<T, K>(
     receipt_token: Coin<K>,
     clock: &Clock,
     version: &Version,
-    ctx: &mut TxContext,
+    ctx: &TxContext,
 ) {
     version.validate_version(VERSION);
 
@@ -298,7 +298,7 @@ public fun set_staking_cap<T, K>(
     vault: &mut Vault<T, K>,
     new_cap: u64,
     version: &Version,
-    ctx: &mut TxContext,
+    ctx: &TxContext,
 ) {
     version.validate_version(VERSION);
     assert!(vault.staking_cap != new_cap, EParamsUnchanged);
@@ -316,7 +316,7 @@ public fun update_withdrawal_time<T, K>(
     vault: &mut Vault<T, K>,
     new_cooldown_time: u64,
     version: &Version,
-    ctx: &mut TxContext,
+    ctx: &TxContext,
 ) {
     version.validate_version(VERSION);
     assert!(
@@ -337,7 +337,7 @@ public fun toggle_vault_pause<T, K>(
     vault: &mut Vault<T, K>,
     pause: bool,
     version: &Version,
-    ctx: &mut TxContext,
+    ctx: &TxContext,
 ) {
     version.validate_version(VERSION);
     assert!(vault.is_paused != pause, EParamsUnchanged);
@@ -355,7 +355,7 @@ public fun set_caps_enabled<T, K>(
     vault: &mut Vault<T, K>,
     enabled: bool,
     version: &Version,
-    ctx: &mut TxContext,
+    ctx: &TxContext,
 ) {
     version.validate_version(VERSION);
     assert!(vault.caps_enabled != enabled, EParamsUnchanged);
