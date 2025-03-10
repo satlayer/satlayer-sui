@@ -10,6 +10,7 @@ const SYMBOL: vector<u8> = b"Symbol";
 const NAME: vector<u8> = b"Name";
 const DESCRIPTION: vector<u8> = b"Description";
 const ICON_URL: vector<u8> = b"Icon_url";
+const DECIMALS: u8 = 9;
 
 /// Init the Coin
 fun init(otw: TEMPLATE, ctx: &mut TxContext) {
@@ -29,7 +30,7 @@ fun create_currency<T: drop>(
 
         let (treasury_cap, metadata) = coin::create_currency(
             otw, 
-            9,
+            DECIMALS,
             SYMBOL,
             NAME,
             DESCRIPTION,

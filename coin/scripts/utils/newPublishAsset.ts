@@ -17,6 +17,7 @@ const publishNewAsset = async (
   symbol: string,
   description: string,
   icon_url: string,
+  decimal: number,
 ) => {
   let packageId = '';
   let CoinMetadata = '';
@@ -44,6 +45,7 @@ const publishNewAsset = async (
       .updateConstant(1, name, "Name", "string")
       .updateConstant(2, description, "Description", "string")
       .updateConstant(3, icon_url, "Icon_url", "string")
+      .updateConstant(4, decimal, 9, "u8")
       .changeIdentifiers({
         template: moduleName,
         TEMPLATE: moduleName.toUpperCase(),
@@ -139,7 +141,7 @@ export const typename = '${packageId}::${moduleName}::${moduleName.toUpperCase()
   }
 };
 
-publishNewAsset("sat_btc", "SAT BTC", "SAT_LBTC", "satlayer", "data:image/webp;base64,UklGRogDAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSJoBAAABgJr9/9Po94/ClmsLhKwAmYCbBHBIJriOx0dmgKIi2wi9uiY7ye8q5f/N+Yhw5LaRI0kzs/HYwe4nUEaFZnpRc7A5MB82g2bkmpogeQrdDturmBONl63Q1iV9UTCC7o4zuesGRkHCP4pP4wtn9jJ5LoqcaH6fc9r31VzfWo2YcxvXzexfKs6CpbhwlIyo4ZYluQ3VTDxUzizNc+Uhy11lqVbTL7XCkq2k/ah8nGVzDpVk3C1Ld+skYs0Z4LycNNprDLGu/cWPMcT+H4weg+wZv2fbM8N8Ej+UxjhGv14CBhp8o3eRdHQie4tkaxOFDDUkvYWlpVtLLEvLi7HEXsRgoyaa5gBNf4Nmc0Bz4H8v/gP+LwM0A/y4xc8b/LzFrxv4dQu+bsLX7UcivYOkq1/BvkVkjHCMS0RE4gnHs4DnhmvJLaTVMdQ0+msZk9ssStJB5EY3JbeG8nPrhwLPzfDcDu8N8N6C701ZFWZdRm9rWIJyqMrojVru3vo8ydNbx09Fge7N8np7K7W3r9qZe3uOcwM3+dzAy35uQFZQOCDIAQAAsAoAnQEqQABAAD6dPptJNCunJjAUDACwE4ljAM0N3i2MKNY+29Yc0CqvSYK0SpMxOMPAF3xL8Y59jg2ID9HPRbpe6uZpprOMHuzxoSuvxJKv8VZI95Nt/F6p0tmp2AD+/dtHFHpoKitlt9Q8f0mZUF8jwPRZ2PaZdQv5Cx5Y/NOsRn+TKZ243X6OOuGyKXk5NE9zrrn7d5Yd4rawn1ClQ6qojXMLkZBd+CTntW/TQJYJiea6Jbvrn2mq2jSjTRjMn6CR94FW7/WcM0nYAAD5VlGnuzyXJ3RTpruQzt7sPq2c9sTlY7DMmj+13dFmezi0YEHXUh7Mk019atDYy2Q5uiLPQFakj7KQHACodeMG6WGIjcefkmasrLidBXr6jz+lRvgHKlNlY9NWvHI3SfIw72dzMfs4ZvI4qL6ilKAPl9gR1VQ1F5earGvDUNJZffp28G/HzfObqdtbDis/ay/008pFfgHsd9ognfybZIdSvrsWHsyu52Q98kFlJm7PBpBmq9R7UOuC30X0dvLb1868BTUW7T5XJejAtA3/BwkD63icjQ5pvkWQe/JP8b1Zlxq2m+f3B2WKRGVaEYw0lfze/7GVcddNvaAA")
+publishNewAsset("sat_btc", "SAT BTC", "SAT_LBTC", "satlayer", "data:image/webp;base64,UklGRogDAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSJoBAAABgJr9/9Po94/ClmsLhKwAmYCbBHBIJriOx0dmgKIi2wi9uiY7ye8q5f/N+Yhw5LaRI0kzs/HYwe4nUEaFZnpRc7A5MB82g2bkmpogeQrdDturmBONl63Q1iV9UTCC7o4zuesGRkHCP4pP4wtn9jJ5LoqcaH6fc9r31VzfWo2YcxvXzexfKs6CpbhwlIyo4ZYluQ3VTDxUzizNc+Uhy11lqVbTL7XCkq2k/ah8nGVzDpVk3C1Ld+skYs0Z4LycNNprDLGu/cWPMcT+H4weg+wZv2fbM8N8Ej+UxjhGv14CBhp8o3eRdHQie4tkaxOFDDUkvYWlpVtLLEvLi7HEXsRgoyaa5gBNf4Nmc0Bz4H8v/gP+LwM0A/y4xc8b/LzFrxv4dQu+bsLX7UcivYOkq1/BvkVkjHCMS0RE4gnHs4DnhmvJLaTVMdQ0+msZk9ssStJB5EY3JbeG8nPrhwLPzfDcDu8N8N6C701ZFWZdRm9rWIJyqMrojVru3vo8ydNbx09Fge7N8np7K7W3r9qZe3uOcwM3+dzAy35uQFZQOCDIAQAAsAoAnQEqQABAAD6dPptJNCunJjAUDACwE4ljAM0N3i2MKNY+29Yc0CqvSYK0SpMxOMPAF3xL8Y59jg2ID9HPRbpe6uZpprOMHuzxoSuvxJKv8VZI95Nt/F6p0tmp2AD+/dtHFHpoKitlt9Q8f0mZUF8jwPRZ2PaZdQv5Cx5Y/NOsRn+TKZ243X6OOuGyKXk5NE9zrrn7d5Yd4rawn1ClQ6qojXMLkZBd+CTntW/TQJYJiea6Jbvrn2mq2jSjTRjMn6CR94FW7/WcM0nYAAD5VlGnuzyXJ3RTpruQzt7sPq2c9sTlY7DMmj+13dFmezi0YEHXUh7Mk019atDYy2Q5uiLPQFakj7KQHACodeMG6WGIjcefkmasrLidBXr6jz+lRvgHKlNlY9NWvHI3SfIw72dzMfs4ZvI4qL6ilKAPl9gR1VQ1F5earGvDUNJZffp28G/HzfObqdtbDis/ay/008pFfgHsd9ognfybZIdSvrsWHsyu52Q98kFlJm7PBpBmq9R7UOuC30X0dvLb1868BTUW7T5XJejAtA3/BwkD63icjQ5pvkWQe/JP8b1Zlxq2m+f3B2WKRGVaEYw0lfze/7GVcddNvaAA", 6)
   .then((result) => {
     console.log(result);
   })

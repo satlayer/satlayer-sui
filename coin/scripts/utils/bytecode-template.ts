@@ -1,6 +1,3 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import {bcs, BcsReader, BcsWriter } from "@mysten/bcs";
 
 /**
@@ -50,7 +47,7 @@ export interface MoveCompiledModule {
   identifiers: string[];
   address_identifiers: string[];
   constant_pool: {
-    type_: string;
+    type_: string | { Vector: string };
     data: number[];
   }[];
   metadata: []; // TODO!
@@ -85,14 +82,13 @@ export class CompiledModule {
   constructor(public inner: MoveCompiledModule) {}
 
   /**
-   * Quite dangerous method which updates a constant in the constant pool. To make sure
-   * that the index is set correctly, the `expectedValue` and `expectedType` must be provided
-   * - this way we at least try to minimize the risk of updating a wrong constant.
+   * Updates a constant in the constant pool. Supports both string and u8/number types.
+   * To ensure correct usage, expectedValue and expectedType must be provided.
    */
   updateConstant(
     idx: number,
-    value: string,
-    expectedValue: string,
+    value: string | number,
+    expectedValue: string | number,
     expectedType: string
   ) {
     if (idx >= this.inner.constant_pool.length) {
@@ -102,31 +98,51 @@ export class CompiledModule {
     }
 
     let { type_, data } = this.inner.constant_pool[idx];
-    type_ =
-      JSON.stringify(type_) == JSON.stringify({ Vector: "U8" })
-        ? "string"
-        : type_;
+    
+    // Determine the actual type from the constant pool
+    let actualType: string;
+    if (typeof type_ === 'string') {
+      actualType = type_.toLowerCase();
+    } else if (type_.Vector === 'U8') {
+      actualType = 'string';
+    } else {
+      actualType = type_.Vector.toLowerCase();
+    }
 
-    if (expectedType.toLowerCase() !== type_.toLowerCase()) {
+    // Validate the expected type
+    if (expectedType.toLowerCase() !== actualType) {
       throw new Error(
-        `Invalid constant type; expected ${expectedType}, got ${type_}`
+        `Invalid constant type; expected ${expectedType}, got ${actualType}`
       );
     }
 
-    //let oldValue = bcs.de(type_.toLowerCase(), new Uint8Array(data)).toString();
-    let oldValue = bcs.string().parse(new Uint8Array(data)); 
+    // Parse the old value based on type
+    let oldValue: string | number;
+    if (actualType === 'string') {
+      oldValue = bcs.string().parse(new Uint8Array(data));
+    } else if (actualType === 'u8') {
+      oldValue = bcs.u8().parse(new Uint8Array(data));
+    } else {
+      throw new Error(`Unsupported type: ${actualType}`);
+    }
 
+    // Validate the expected value
     if (oldValue !== expectedValue) {
       throw new Error(
         `Invalid constant value; expected ${expectedValue}, got ${oldValue}`
       );
     }
 
-    this.inner.constant_pool[idx].data = [
-      //...bcs.ser(type_.toLowerCase(), value).toBytes(),
-      ...bcs.string().serialize(value).toBytes(),
-
-    ];
+    // Serialize the new value based on type
+    if (actualType === 'string') {
+      this.inner.constant_pool[idx].data = [
+        ...bcs.string().serialize(value as string).toBytes(),
+      ];
+    } else if (actualType === 'u8') {
+      this.inner.constant_pool[idx].data = [
+        ...bcs.u8().serialize(value as number).toBytes(),
+      ];
+    }
 
     return this;
   }
@@ -197,5 +213,5 @@ export class CompiledModule {
 }
 
 export function getByteCode() {
-  return "a11ceb0b060000000a01000c020c1e032a33045d0c05696d07d601d10108a70360068704310ab804050cbd044e0011010c02060212021302140002020001010701000002000c01000102030c01000104040200050507000009000100000702030102010b010b010001100d0b010002070e0f0102030d0d01010c030e0801010c040f050600050a0c0a0001040607020a030a040d051002080007080400020900070804010b03010900010800010608040105010b0301080002090005040b010108050b010108050b020109000b03010900010805010b01010900010a02010900070900020a020a020a020b01010805070804020b030109000b02010900010b020109000c436f696e4d65746164617461064f7074696f6e0854454d504c4154450b5472656173757279436170095478436f6e746578740355726c04636f696e0f6372656174655f63757272656e63790b64756d6d795f6669656c6404696e6974156e65775f756e736166655f66726f6d5f6279746573046e6f6e65066f7074696f6e147075626c69635f667265657a655f6f626a6563740f7075626c69635f7472616e736665720673656e64657204736f6d650874656d706c617465087472616e736665720a74785f636f6e746578740375726c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020a02070653796d626f6c0a0205044e616d650a020c0b4465736372697074696f6e0a02090849636f6e5f75726c0a02010000020108010000000001080b000a0138000b012e110738010201000000091b0703070421040738020c02050b0703110838030c020b020c030b0031090700070107020b030b0138040c040c050b0438050b050200";
+  return "a11ceb0b060000000a01000c020c1e032a33045d0c05696d07d601d10108a70360068704340abb04050cc0044e0011010c02060212021302140002020001010701000002000c01000102030c01000104040200050507000009000100000702030102010b010b010001100d0b010002070e0f0102030d0d01010c030e0801010c040f050600050a0c0a0001040607020a030a040d051002080007080400020900070804010b03010900010800010608040105010b0301080002090005040b010108050b010108050b020109000b03010900010805010b01010900010a02010900070900020a020a020a020b01010805070804020b030109000b02010900010b020109000c436f696e4d65746164617461064f7074696f6e0854454d504c4154450b5472656173757279436170095478436f6e746578740355726c04636f696e0f6372656174655f63757272656e63790b64756d6d795f6669656c6404696e6974156e65775f756e736166655f66726f6d5f6279746573046e6f6e65066f7074696f6e147075626c69635f667265657a655f6f626a6563740f7075626c69635f7472616e736665720673656e64657204736f6d650874656d706c617465087472616e736665720a74785f636f6e746578740375726c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020a02070653796d626f6c0a0205044e616d650a020c0b4465736372697074696f6e0a02090849636f6e5f75726c0201090a02010000020108010000000001080b000a0138000b012e110738010201000000091b0703070521040738020c02050b0703110838030c020b020c030b0007040700070107020b030b0138040c040c050b0438050b050200";
 }
