@@ -55,6 +55,8 @@ async function mintTestDepositToken(recipient: string, mint_amount: number,) {
 
     
 }
+
+// Change the recipient address and mint amount
 mintTestDepositToken(
     '0x821febff0631744c231a0f696f62b72576f2634b2ade78c74ff20f1df97fc9bf', 
     5_000_000_000
