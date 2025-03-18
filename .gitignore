@@ -1,0 +1,14 @@
+core/build/
+core/.env
+coin/.env
+coin/build/
+core/Move.lock
+coin/Move.lock
+coin/coin_info
+scripts/dist/
+scripts/utils/packageInfo.ts
+scripts/.env
+node_modules/
+scripts/node_modules/
+package-lock.json
+.env

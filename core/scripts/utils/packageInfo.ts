@@ -1,0 +1,10 @@
+export const packageId = '0x843a5b69aa583eb87a4fcabb2af40c4cda8470c0403e168e3965cc7da4ff10fb';
+export const AdminCap = '0x4488dd1bce8610f74a35edc8d6de58499a7cf032e783545a323731a01c90eead';
+export const VAdminCap = '0x61c8bc687d2681fa8528751a1a0bd3e7aebaca55139f191be4adea8045c70806'; 
+export const Version = '0xe91f9b8ceb5d24d33435df9f5b71f2a37a421e2749eaa9e4b717df57d8f56f3b';
+export const UpgradeCap = '0xa734b3f1fba6ff4da9c16eadac8aee0904105e8fc86f916e038d15324a431ae2';
+export const DepositTokenTreasuryCap = '0xdb8edec0e19f6a6d5cd9114fa9addc2fdfbd164214161d5e1b2db1c64d6b619f';
+export const COIN_A_TYPE = '0x15e6610732f5f9c5a202b70de0f3d13cb22af58a5e31b935eaddb436c04556ef::lbtc::LBTC';
+export const COIN_B_TYPE = '0xaf4c5f3390570c68af17ad642533db264e0618fbc96376fd04e47ceac044856c::sat_btc::SAT_BTC';
+export const ReceiptTokenTreasuryCap = '0xf786faaee0b21675421b7332ec6eda0fd9f9d0cb62dfcef614144d46e48880ae';
+export const Vault = '0xb34774b3cf2ab6b342f6ff1e0455db0bae63017d6521d6d2775ed3c6e60e9afa';
