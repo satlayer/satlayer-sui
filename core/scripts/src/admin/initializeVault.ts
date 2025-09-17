@@ -9,12 +9,12 @@ async function intializeVault(staking_cap: number, min_deposit_amount: number, w
     try {
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
-    
+
     tx.moveCall({
         target: `${packageId}::satlayer_pool::initialize_vault`,
         arguments: [
             tx.object(AdminCap),
-            tx.object(ReceiptTokenTreasuryCap), 
+            tx.object(ReceiptTokenTreasuryCap),
             tx.pure.u64(staking_cap),
             tx.pure.u64(min_deposit_amount), // it will be according to deposit token decimal amount.
             tx.pure.u64(withdrawaltimestamp),
@@ -63,6 +63,6 @@ async function intializeVault(staking_cap: number, min_deposit_amount: number, w
     } catch (error) {
         console.error('Error creating  Vault', error);
     }
-    
+
 }
-intializeVault(10_000_000_000, 1_000_000_000, 7*24*60*60*1000);
+intializeVault(200_000_000_000, 1, 7*24*60*60*1000);
