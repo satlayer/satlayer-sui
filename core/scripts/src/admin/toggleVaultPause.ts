@@ -22,17 +22,17 @@ async function toggleVaultPause(pause: boolean) {
     });
 
     // Sign and execute the transaction
-    const result = await client.signAndExecuteTransaction({
-        signer: keypair,
-        transaction: tx,
-    });
-    console.log(result);
+    // const result = await client.signAndExecuteTransaction({
+    //     signer: keypair,
+    //     transaction: tx,
+    // });
+    // console.log(result);
 
     // For getting the raw transaction bytes
-    // tx.setGasBudget(10000);
-    // tx.setSender(keypair.getPublicKey().toSuiAddress());
-    // const txBytes = await tx.build({client});
-    // const txHex = toHex(txBytes)
-    // console.log(txHex);
+    tx.setGasBudget(500000);
+    tx.setSender("0x3e8b358d6bc94965cc5866ad03331a9fbd090aa5f11257ed810d8d52e811e508");
+    const txBytes = await tx.build({client});
+    const txHex = toHex(txBytes)
+    console.log(txHex);
 }
-toggleVaultPause(false);
+toggleVaultPause(true);
