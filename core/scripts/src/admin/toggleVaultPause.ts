@@ -5,7 +5,7 @@ import { AdminCap, COIN_A_TYPE, COIN_B_TYPE, packageId, Vault, Version } from '.
 import getTxHex from '../../utils/getTxHex';
 dotenv.config();
 
-async function toggleVaultPause(pause: boolean) {
+async function toggleVaultPause({pause, useMultiSig}: {pause: boolean, useMultiSig: boolean}) {
 
     const { keypair, client } = getExecStuff();
     const tx = new Transaction();
@@ -21,17 +21,23 @@ async function toggleVaultPause(pause: boolean) {
         typeArguments: [COIN_A_TYPE, COIN_B_TYPE ],
     });
 
-    // To execute the transaction
-    // const result = await client.signAndExecuteTransaction({
-    //     signer: keypair,
-    //     transaction: tx,
-    // });
-    // console.log(result);
+    if (useMultiSig) {
+        console.log(`Toggle vault pause to ${pause} raw tx hex:`, await getTxHex({
+            tx,
+            client
+        }));
+        return
+    }
 
-    // To get the raw transaction bytes
-    console.log(`Toggle vault pause to ${pause} raw tx hex:`, await getTxHex({
-        tx,
-        client
-    }));
+    // To execute the transaction
+    const result = await client.signAndExecuteTransaction({
+        signer: keypair,
+        transaction: tx,
+    });
+    console.log(result);
 }
-toggleVaultPause(true);
+
+toggleVaultPause({
+    pause: true, // set pause value here, by default 
+    useMultiSig: true
+});

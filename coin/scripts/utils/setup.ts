@@ -1,8 +1,8 @@
 import { SuiObjectChangePublished } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import getExecStuff from "./execStuff";
 import { execSync } from "child_process";
 import { promises as fs } from "fs";
+import getExecStuff from "../../../core/scripts/utils/execStuff";
 
 const getPackageId = async () => {
     let packageId = "";
@@ -56,7 +56,7 @@ const getPackageId = async () => {
             console.log("Digest is not available");
             return { packageId };
         }
-        
+
         const txn = await client.waitForTransaction({
             digest: result.digest,
             options: {
@@ -69,10 +69,10 @@ const getPackageId = async () => {
         });
 
         for (const item of txn.objectChanges || []) {
-            if (item.type === "created") { 
+            if (item.type === "created") {
                    if (item.objectType === `0x2::coin::TreasuryCap<${packageId}::template::TEMPLATE>`)
                     TreasuryCap = String(item.objectId);
-                
+
             }
         }
         const content = `export const packageId = '${packageId}';
@@ -85,7 +85,7 @@ export const TYPENAME = '${packageId}::template::TEMPLATE';\n`;
             packageId,
             TreasuryCap,
         };
-} 
+}
     catch (error) {
         console.error(error);
     }
@@ -97,5 +97,5 @@ getPackageId()
     })
     .catch((error) => {
         console.error(error);
-    }); 
+    });
 export default getPackageId;
