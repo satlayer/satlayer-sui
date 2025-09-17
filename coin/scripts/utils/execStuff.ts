@@ -7,10 +7,10 @@ type network_type = "mainnet" | "testnet" | "devnet" | "localnet";
 
 const MNEMONICS = process.env.MNEMONICS || "";
 const NETWORK  = process.env.NETWORK as network_type;
-const ADDRESS = process.env.ADDRESS || "";
+const ACCOUNT_INDEX = process.env.ACCOUNT_INDEX || "0";
 
 const getExecStuff = () => {
-    const keypair = Ed25519Keypair.deriveKeypair(MNEMONICS);
+    const keypair = Ed25519Keypair.deriveKeypair(MNEMONICS, `m/44'/784'/${ACCOUNT_INDEX}'/0'/0'`);
     const client = new SuiClient({
         url: getFullnodeUrl(NETWORK),
     });

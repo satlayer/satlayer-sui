@@ -1,5 +1,5 @@
-export const packageId = '0x9e998601660bba48e7fabefa97de5b6c80c970f2a18ee31a028c7fc02a4e97f5';
-export const CoinMetadata= '0x6a99c842413a085208dffc361b17d67963f33792a565df03f6d50aeac8c9fc26';
-export const UpgrdeCap = '0x9274173c81aeef8431b41aa28c80a025a88fb4e2d321c493455d933ab02be96c';
-export const TreasuryCap = '0x5858303ac6470f36f478d419dc8330db8ab932940d20cfec8d6e690b537ccf6e';
-export const typename = '0x9e998601660bba48e7fabefa97de5b6c80c970f2a18ee31a028c7fc02a4e97f5::satybtc::SATYBTC';
+export const packageId = '0xc9af0022088a1ce45cfeac2f93bd4c26e34ea5325c02e72da18d4c62eddcbe8b';
+export const CoinMetadata= '0xb1983937de322e1455ed4cf340e474cab0489669a2fade88ae14cd652bb1358d';
+export const UpgrdeCap = '0xa5961c18a3a1ae942f825b5bc3ec68190515c1c82294cbf0fd5b0566bcce307f';
+export const TreasuryCap = '0x8d123be937a523f90c7c13929dc07c229bb77f7c92d077411b2bb9721e2f7a29';
+export const typename = '0xc9af0022088a1ce45cfeac2f93bd4c26e34ea5325c02e72da18d4c62eddcbe8b::waybtc::WAYBTC';

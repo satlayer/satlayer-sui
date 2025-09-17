@@ -2,6 +2,7 @@ import { Transaction } from '@mysten/sui/transactions';
 import * as dotenv from 'dotenv';
 import getExecStuff from '../../utils/execStuff';
 import { AdminCap, packageId  } from '../../utils/packageInfo';
+import getTxHex from '../../utils/getTxHex';
 dotenv.config();
 
 async function transferAdminCap(recipient: string) {
@@ -12,17 +13,24 @@ async function transferAdminCap(recipient: string) {
     tx.moveCall({
         target: `0x2::transfer::public_transfer`,
         arguments: [
-          tx.object(AdminCap), 
+          tx.object(AdminCap),
           tx.pure.address(recipient),
 
         ],
         typeArguments: [`${packageId}::satlayer_pool::AdminCap`],
     });
-    const result = await client.signAndExecuteTransaction({
-        signer: keypair,
-        transaction: tx,
-    });
-    console.log(result); 
+    // To execute transaction
+    // const result = await client.signAndExecuteTransaction({
+    //     signer: keypair,
+    //     transaction: tx,
+    // });
+    // console.log(result);
+
+    // To get the raw transaction bytes
+    console.log('Transfer admin cap raw tx hex:', await getTxHex({
+        tx,
+        client
+    }));
 }
 
-transferAdminCap('0x821febff0631744c231a0f696f62b72576f2634b2ade78c74ff20f1df97fc9bf');
+transferAdminCap('0x28e2822f5d5ae714299e664ab1739667f65240263c70f26afce3cf086c67c7ec');
