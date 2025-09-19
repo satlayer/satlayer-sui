@@ -22,7 +22,7 @@ async function toggleVaultPause({pause, useMultiSig}: {pause: boolean, useMultiS
     });
 
     if (useMultiSig) {
-        console.log(`Toggle vault pause to ${pause} raw tx hex:`, await getTxHex({
+        console.log(`Toggle vault pause to ${pause} raw tx hex:\n`, await getTxHex({
             tx,
             client
         }));
@@ -38,6 +38,6 @@ async function toggleVaultPause({pause, useMultiSig}: {pause: boolean, useMultiS
 }
 
 toggleVaultPause({
-    pause: true, // set pause value here, by default 
+    pause: true, // set pause value here, by default vault is paused when first created/initialized
     useMultiSig: true
 });
